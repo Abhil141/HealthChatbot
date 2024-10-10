@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Health Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+
+<body>
+    <div class="cover">
+        <div class="intro">
+            <img src="logo.png" alt="Health Assistant Logo" class="logo"> <!-- Replace with your logo -->
+            <h1>Health Assistant</h1>
+            <p>Your personal AI health assistant for a better life.</p>
+        </div>
+        <div class="wrapper">
+            <header>Sign Up</header>
+            <form id="signup-form">
+                <div class="field name">
+                    <div class="input-area">
+                        <input type="text" id="signup-name" placeholder="Name" required>
+                        <i class="icon fas fa-user"></i>
+                        <i class="error error-icon fas fa-exclamation-circle"></i>
+                        <i class="success check-icon fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="field email">
+                    <div class="input-area">
+                        <input type="email" id="signup-email" placeholder="Email" required>
+                        <i class="icon fas fa-envelope"></i>
+                        <i class="error error-icon fas fa-exclamation-circle"></i>
+                        <i class="success check-icon fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="field password">
+                    <div class="input-area">
+                        <input type="password" id="signup-password" placeholder="Password" required>
+                        <i class="icon fas fa-lock"></i>
+                        <i class="error error-icon fas fa-exclamation-circle"></i>
+                        <i class="success check-icon fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <input type="submit" value="Sign Up">
+            </form>
+            <div class="sign-txt">Already a Member? <a href="index.html">Login now</a></div>
+        </div>
+    </div>
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js';
+
+        // Firebase configuration object
+        const firebaseConfig = {
+            apiKey: "AIzaSyDbPH1f2-GvKgVF6A83d_ssbgR8c2da00A",
+            authDomain: "health-chatbot-18438.firebaseapp.com",
+            projectId: "health-chatbot-18438",
+            storageBucket: "health-chatbot-18438.appspot.com",
+            messagingSenderId: "192711634499",
+            appId: "1:192711634499:web:1f01d5a179e1c6be1feef6",
+            measurementId: "G-MT6LH1ZCYN"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Handle signup form submission
+        document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                alert('Sign Up Successful!');
+                window.location.href = 'index.html'; // Redirect to login page
+            } catch (error) {
+                console.error('Error signing up:', error.message);
+                alert('Error: ' + error.message);
+            }
+        });
+
+        // Input validation
+        document.querySelectorAll('.input-area input').forEach(input => {
+            input.addEventListener('input', function() {
+                const parent = this.closest('.field');
+                if (this.value.trim() !== '') {
+                    parent.classList.add('valid');
+                    parent.classList.remove('error');
+                    parent.querySelector('.error').style.display = 'none';
+                    parent.querySelector('.success').style.display = 'block';
+                } else {
+                    parent.classList.remove('valid');
+                    parent.classList.add('error');
+                    parent.querySelector('.error').style.display = 'block';
+                    parent.querySelector('.success').style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
