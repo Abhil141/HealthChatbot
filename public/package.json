@@ -1,0 +1,23 @@
+{
+  "name": "se_project",
+  "version": "1.0.0",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
+    "firebase": "^10.13.1",
+    "firebase-admin": "^12.4.0",
+    "nodemailer": "^6.9.1",
+    "se_project": "file:"
+  },
+  "type": "module",
+  "engines": {
+    "node": "20"
+  }
+}

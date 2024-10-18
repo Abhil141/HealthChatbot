@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('healthbg.jpg'); /* Updated background image */
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+        .profile-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        h1 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid darkred;
+            background-color: #f0f0f0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .profile-info {
+            text-align: left;
+            font-size: 18px;
+            color: black;
+            margin-bottom: 20px;
+        }
+        .profile-info p {
+            margin: 8px 0;
+        }
+        .edit-profile-btn, .signout-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: darkred;
+            color: white;
+            text-transform: uppercase;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.3s;
+            cursor: pointer;
+            border-width: 0;
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+        .edit-profile-btn:hover, .signout-btn:hover {
+            background-color: #b30000;
+            transform: scale(1.05);
+        }
+        .edit-profile-btn:active, .signout-btn:active {
+            background-color: #990000;
+            transform: scale(0.98);
+        }
+        .bio-section {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .bio-section p {
+            font-style: italic;
+            font-size: 16px;
+            color: #333;
+            margin-top: -15px;
+        }
+        .social-media {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .social-media a {
+            text-decoration: none;
+            font-size: 24px;
+            color: darkred;
+            transition: transform 0.3s;
+        }
+        .social-media a:hover {
+            transform: scale(1.2);
+        }
+        @media (max-width: 768px) {
+            .profile-container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            .profile-info p {
+                font-size: 16px;
+            }
+            .edit-profile-btn, .signout-btn {
+                font-size: 16px;
+            }
+        }
+        .profile-info p span {
+            text-transform: capitalize; /* Apply capitalization to all spans */
+        }
+        
+        #profile-email {
+            text-transform: none; /* Remove capitalization for the email span */
+        }        
+        
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h1>User Profile</h1>
+        <div class="profile-picture">
+            <img id="profile-img" src="default-profile.png" alt="Profile Picture"> <!-- Default image for loading state -->
+        </div>
+        <div class="bio-section">
+            <h2>About Me</h2>
+            <p id="profile-bio">Loading...</p>
+        </div>
+        <div class="profile-info">
+            <p><strong>Username:</strong> <span id="profile-username">Loading...</span></p>
+            <p><strong>Full Name:</strong> <span id="profile-fullName">Loading...</span></p>
+            <p><strong>Email:</strong> <span id="profile-email">Loading...</span></p>
+            <p><strong>Phone:</strong> <span id="profile-phone">Loading...</span></p>
+            <p><strong>Address:</strong> <span id="profile-address">Loading...</span></p>
+            <p><strong>Date of Birth:</strong> <span id="profile-dob">Loading...</span></p>
+            <p><strong>Gender:</strong> <span id="profile-gender">Loading...</span></p>
+        </div>
+        <a href="editprofile.html" class="edit-profile-btn">Edit Profile</a>
+        <button class="signout-btn" id="signout-btn">Sign Out</button>
+
+        <div class="social-media">
+            <a href="#" title="LinkedIn"><i class="fa fa-linkedin"></i></a>
+            <a href="#" title="Twitter"><i class="fa fa-twitter"></i></a>
+            <a href="#" title="Instagram"><i class="fa fa-instagram"></i></a>
+        </div>
+    </div>
+
+    <!-- Font Awesome icons CDN for social media icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+    <!-- Firebase App (required for all Firebase products) -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
+        import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+        import { getStorage, ref, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js'; // Import Firebase Storage
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDbPH1f2-GvKgVF6A83d_ssbgR8c2da00A",
+            authDomain: "health-chatbot-18438.firebaseapp.com",
+            databaseURL: "https://health-chatbot-18438-default-rtdb.firebaseio.com",
+            projectId: "health-chatbot-18438",
+            storageBucket: "health-chatbot-18438.appspot.com",
+            messagingSenderId: "192711634499",
+            appId: "1:192711634499:web:1f01d5a179e1c6be1feef6",
+            measurementId: "G-MT6LH1ZCYN"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app); // Initialize Firebase Storage
+
+        // Function to display user profile data
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // Retrieve the profile data from Firestore
+                try {
+                    const docRef = doc(db, 'users', user.uid);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const userProfile = docSnap.data();
+                        // Populate the profile page with user data
+                        document.getElementById('profile-username').textContent = userProfile.username || 'N/A';
+                        document.getElementById('profile-fullName').textContent = userProfile.fullName || 'N/A';
+                        document.getElementById('profile-email').textContent = userProfile.email || 'N/A';
+                        document.getElementById('profile-phone').textContent = userProfile.phone || 'N/A';
+                        document.getElementById('profile-address').textContent = userProfile.address || 'N/A';
+                        document.getElementById('profile-dob').textContent = userProfile.dob || 'N/A';
+                        document.getElementById('profile-gender').textContent = userProfile.gender || 'N/A';
+                        document.getElementById('profile-bio').textContent = userProfile.bio || 'Tell us about yourself...';
+
+                        // Retrieve and set the profile image URL
+                        const profileImgRef = ref(storage, `profilePictures/${user.uid}`);
+                        try {
+                            const url = await getDownloadURL(profileImgRef);
+                            document.getElementById('profile-img').src = url;
+                        } catch (error) {
+                            console.error('Error retrieving profile image URL: ', error);
+                            // Optional: Set a default image or handle the error
+                            document.getElementById('profile-img').src = 'default-profile.png'; // Replace with your default image path
+                        }
+                    } else {
+                        console.log('No profile data found!');
+                    }
+                } catch (error) {
+                    console.error('Error retrieving profile data: ', error);
+                }
+            } else {
+                // Redirect to login if the user is not authenticated
+                window.location.href = 'login.html'; // Redirect to login page (login.html)
+            }
+        });
+
+        // Handle sign-out
+        document.getElementById('signout-btn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                alert('Signed out successfully.');
+                window.location.href = 'index.html'; // Redirect to default_homepage page (index).html)
+            } catch (error) {
+                console.error('Error signing out: ', error);
+                alert('Failed to sign out. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
